@@ -9,13 +9,13 @@ from cbs import detect_collisions_among_all_paths
 
 
 def generate_priority_pairs(collision):
-
     priority_pairs = []
 
     ##############################
     # TODO Task 4.1: Generate list of priority pairs based on the given collision
 
     return priority_pairs
+
 
 def get_lower_priority_agents(priority_pairs, agent):
     # Get the agents behind a given agent in a topological ordering
@@ -28,8 +28,9 @@ def get_lower_priority_agents(priority_pairs, agent):
 
     if not tg.has_node(agent):
         return [agent]
-    
+
     return tg.get_subsequent_nodes_in_topological_ordering(agent)
+
 
 def get_higher_priority_agents(priority_pairs, agent):
     # Get the agents ahead of a given agent in a topological ordering
@@ -44,6 +45,7 @@ def get_higher_priority_agents(priority_pairs, agent):
         return [agent]
 
     return tg.get_subsequent_nodes_in_topological_ordering(agent)
+
 
 def collide_with_higher_priority_agents(node, agent):
     # Check if the given agent collides with any higher priority agents
@@ -61,7 +63,8 @@ def collide_with_higher_priority_agents(node, agent):
         elif collision['a2'] == agent and collision['a1'] in higher_priority_agents:
             return True
 
-    return False 
+    return False
+
 
 class PBSSolver(object):
     """The high-level search of PBS."""
@@ -98,7 +101,7 @@ class PBSSolver(object):
             if node['cost'] <= self.search_stack[i]['cost']:
                 index = i
                 break
-        
+
         self.search_stack.insert(index, node)
 
     def pop_node_from_stack(self):
@@ -106,12 +109,11 @@ class PBSSolver(object):
         node = self.search_stack.popleft()
         return node
 
-    def update_plan(self,node,i):
-        
-        # Task 4.2 TODO : Refer to the given psuedocode or the cited paper for more details on what this function does
-        
-        return True
+    def update_plan(self, node, i):
 
+        # Task 4.2 TODO : Refer to the given psuedocode or the cited paper for more details on what this function does
+
+        return True
 
     def find_solution(self):
         """ Finds paths for all agents from their start locations to their goal locations
@@ -126,7 +128,7 @@ class PBSSolver(object):
         # paths         - list of paths, one for each agent
         #               [[(x11, y11), (x12, y12), ...], [(x21, y21), (x22, y22), ...], ...]
         # collisions     - list of collisions in paths
-        
+
         ##############################
         # Task 4.2: Initialize the root node dict, what will be the initial priority pairs for standard PBS?
         #
@@ -136,18 +138,17 @@ class PBSSolver(object):
         ##############################
         # Task 4.2: Find initial path for each agent
         #   
-        for i in range(self.num_of_agents):  
-            self.update_plan(root,i)
+        for i in range(self.num_of_agents):
+            self.update_plan(root, i)
 
         root['cost'] = get_sum_of_cost(root['paths'])
         root['collisions'] = detect_collisions_among_all_paths(root['paths'])
-        
+
         ##############################
         # Task 4.2: Add root to search stack
         # TODO
 
-
-        while len(self.search_stack)>0:
+        while len(self.search_stack) > 0:
 
             ##############################
             # Task 4.2: Get next node from stack
@@ -156,7 +157,9 @@ class PBSSolver(object):
             next_node = None
 
             # print expanded node info
-            print("Expanded node cost: {} priority {} collisions {}".format(next_node['cost'],(next_node['priority_pairs']),(next_node['collisions'])))
+            print("Expanded node cost: {} priority {} collisions {}".format(next_node['cost'],
+                                                                            (next_node['priority_pairs']),
+                                                                            (next_node['collisions'])))
 
             if len(next_node['collisions']) == 0:
                 self.print_results(next_node)
@@ -167,10 +170,10 @@ class PBSSolver(object):
             # Task 4.1: Generate priority pairs for this collision
             #     
             priority_pairs = generate_priority_pairs(collision)
-            
+
             # Create child nodes
             for priority_pair in priority_pairs:
-                #agent = constraint['agent']
+                # agent = constraint['agent']
 
                 # Create new child node
                 child = copy.deepcopy(next_node)
@@ -185,19 +188,17 @@ class PBSSolver(object):
                 ##############################
                 # Task 4.2:  Replan for all agents in topological order
                 #     
-                update_success = self.update_plan(child,priority_pair[1])
+                update_success = self.update_plan(child, priority_pair[1])
 
                 if update_success:
                     child['cost'] = get_sum_of_cost(child['paths'])
                     child['collisions'] = detect_collisions_among_all_paths(child['paths'])
 
-            
             ##############################
             # Task 4.2:  # Add nodes to stack from heap in non increasing order of cost
             # TODO
 
         return None
-
 
     def print_results(self, node):
         print("\n Found a solution! \n")

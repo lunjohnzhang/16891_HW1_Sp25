@@ -3,12 +3,14 @@ from collections import defaultdict
 '''
 Note : Node ids should be integers in the range [1, n] where n is the number of nodes in the graph
 '''
+
+
 class TopologyGraph:
     def __init__(self, directed=False):
         self.graph = defaultdict(list)
         self.vertices = []
         self.directed = directed
-    
+
     def has_node(self, node):
         return node in self.graph
 
@@ -30,13 +32,13 @@ class TopologyGraph:
                 self.visit(i, visited, sortlist)
 
         sortlist.insert(0, s)
-    
+
     def get_subsequent_nodes_in_topological_ordering(self, node):
-        if(self.is_cyclic() == 1):
-            return [] 
-        
+        if (self.is_cyclic() == 1):
+            return []
+
         visited = {i: False for i in self.graph}
-        
+
         sortlist = []
 
         if not visited[node]:
@@ -66,9 +68,9 @@ class TopologyGraph:
         recStack[v] = False
         return False
 
-	# Returns true if graph is cyclic else false
+    # Returns true if graph is cyclic else false
     def is_cyclic(self):
-        self.V = len(self.vertices) #total vertices
+        self.V = len(self.vertices)  # total vertices
 
         visited = {i: False for i in self.vertices}
         recStack = {i: False for i in self.vertices}
@@ -78,8 +80,8 @@ class TopologyGraph:
                 if self.is_cyclic_util(node, visited, recStack) == True:
                     return True
         return False
-    
+
     def clear_graph(self):
         self.graph.clear()
         self.vertices = []
-        self.V=0
+        self.V = 0
