@@ -38,8 +38,6 @@ def standard_splitting(collision):
     pass
 
 
-
-
 class CBSSolver(object):
     """The high-level search of CBS."""
 
@@ -122,7 +120,6 @@ class CBSSolver(object):
         # These are just to print debug output - can be modified once you implement the high-level search
         self.print_results(root)
         return root['paths']
-
 
     def print_results(self, node):
         print("\n Found a solution! \n")

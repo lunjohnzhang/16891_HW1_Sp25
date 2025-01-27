@@ -1,21 +1,21 @@
 import heapq
 
+
 def move(loc, dir):
     directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]
     return loc[0] + directions[dir][0], loc[1] + directions[dir][1]
 
 
 def move_joint_state(locs, dir):
-
     new_locs = []
-    
+
     return new_locs
 
-def generate_motions_recursive(num_agents,cur_agent):
-    directions = [(0, -1), (1, 0), (0, 1), (-1, 0), (0, 0)]
-    
-    joint_state_motions = []
 
+def generate_motions_recursive(num_agents, cur_agent):
+    directions = [(0, -1), (1, 0), (0, 1), (-1, 0), (0, 0)]
+
+    joint_state_motions = []
 
     return joint_state_motions
 
@@ -30,6 +30,7 @@ def is_valid_motion(old_loc, new_loc):
     # TODO
 
     return True
+
 
 def get_sum_of_cost(paths):
     rst = 0
@@ -53,8 +54,8 @@ def compute_heuristics(my_map, goal):
             child_loc = move(loc, dir)
             child_cost = cost + 1
             if child_loc[0] < 0 or child_loc[0] >= len(my_map) \
-               or child_loc[1] < 0 or child_loc[1] >= len(my_map[0]):
-               continue
+                    or child_loc[1] < 0 or child_loc[1] >= len(my_map[0]):
+                continue
             if my_map[child_loc[0]][child_loc[1]]:
                 continue
             child = {'loc': child_loc, 'cost': child_cost}
@@ -62,7 +63,6 @@ def compute_heuristics(my_map, goal):
                 existing_node = closed_list[child_loc]
                 if existing_node['cost'] > child_cost:
                     closed_list[child_loc] = child
-                    # open_list.delete((existing_node['cost'], existing_node['loc'], existing_node))
                     heapq.heappush(open_list, (child_cost, child_loc, child))
             else:
                 closed_list[child_loc] = child
@@ -126,11 +126,13 @@ def compare_nodes(n1, n2):
     """Return true is n1 is better than n2."""
     return n1['g_val'] + n1['h_val'] < n2['g_val'] + n2['h_val']
 
+
 def in_map(map, loc):
     if loc[0] >= len(map) or loc[1] >= len(map[0]) or min(loc) < 0:
         return False
     else:
         return True
+
 
 def all_in_map(map, locs):
     for loc in locs:
@@ -138,10 +140,12 @@ def all_in_map(map, locs):
             return False
     return True
 
+
 def a_star(my_map, start_loc, goal_loc, h_values, agent, constraints):
     """ my_map      - binary obstacle map
         start_loc   - start position
         goal_loc    - goal position
+        h_values    - precomputed heuristic values for each location on the map
         agent       - the agent that is being re-planned
         constraints - constraints defining where robot should or cannot go at each timestep
     """
@@ -168,9 +172,9 @@ def a_star(my_map, start_loc, goal_loc, h_values, agent, constraints):
             if not in_map(my_map, child_loc) or my_map[child_loc[0]][child_loc[1]]:
                 continue
             child = {'loc': child_loc,
-                    'g_val': curr['g_val'] + 1,
-                    'h_val': h_values[child_loc],
-                    'parent': curr}
+                     'g_val': curr['g_val'] + 1,
+                     'h_val': h_values[child_loc],
+                     'parent': curr}
             if (child['loc']) in closed_list:
                 existing_node = closed_list[(child['loc'])]
                 if compare_nodes(child, existing_node):
@@ -194,53 +198,53 @@ def joint_state_a_star(my_map, starts, goals, h_values, num_agents):
     closed_list = dict()
     earliest_goal_timestep = 0
     h_value = 0
-     ##############################
+    ##############################
     # Task 1.1: Iterate through starts and use list of h_values to calculate total h_value for root node
     #
     # TODO
-    
-    root = {'loc': starts, 'g_val': 0, 'h_val': h_value, 'parent': None }
+
+    root = {'loc': starts, 'g_val': 0, 'h_val': h_value, 'parent': None}
     push_node(open_list, root)
     closed_list[tuple(root['loc'])] = root
 
-     ##############################
+    ##############################
     # Task 1.1:  Generate set of all possible motions in joint state space
     #
     # TODO
-    directions = generate_motions_recursive(num_agents,0)
+    directions = generate_motions_recursive(num_agents, 0)
     while len(open_list) > 0:
         curr = pop_node(open_list)
-        
+
         if curr['loc'] == goals:
             return get_path(curr)
 
         for dir in directions:
-            
+
             ##############################
             # Task 1.1:  Update position of each agent
             #
             # TODO
             child_loc = move_joint_state(curr['loc'], dir)
-            
+
             if not all_in_map(my_map, child_loc):
                 continue
-             ##############################
+            ##############################
             # Task 1.1:  Check if any agent is in an obstacle
             #
             valid_move = True
             # TODO
-            
+
             if not valid_move:
                 continue
 
-             ##############################
+            ##############################
             # Task 1.1:   check for collisions
             #
             # TODO
-            if not is_valid_motion(curr['loc'],child_loc):
+            if not is_valid_motion(curr['loc'], child_loc):
                 continue
-            
-             ##############################
+
+            ##############################
             # Task 1.1:  Calculate heuristic value
             #
             # TODO
@@ -248,9 +252,9 @@ def joint_state_a_star(my_map, starts, goals, h_values, num_agents):
 
             # Create child node
             child = {'loc': child_loc,
-                    'g_val': curr['g_val'] + num_agents,
-                    'h_val': h_value,
-                    'parent': curr}
+                     'g_val': curr['g_val'] + num_agents,
+                     'h_val': h_value,
+                     'parent': curr}
             if tuple(child['loc']) in closed_list:
                 existing_node = closed_list[tuple(child['loc'])]
                 if compare_nodes(child, existing_node):
